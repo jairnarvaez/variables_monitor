@@ -3,13 +3,12 @@
 AgriTech es una plataforma desarrollada en el marco de un proyecto de integración profesional.  
 Su objetivo es **monitorear variables ambientales de una huerta comunitaria** mediante una estación meteorológica.  
 
-El sistema está estructurado en tres componentes principales:  
+El sistema se estructuró en tres componentes principales:  
 1. **Servidor** – Desarrollado en Django, gestiona la interfaz web y la base de datos.  
-2. **Gateway** – Recibe los datos de los sensores y los transmite al servidor.  
-3. **Red de Sensores** – Captura datos ambientales (en este repositorio se simula mediante archivos CSV).  
+2. **Gateway** – Recibe los datos de los sensores y los transmite al servidor, implementado en una Raspberry PI 4  
+3. **Red de Sensores** – Captura datos ambientales  usando como plataforma Arduino  (en este repositorio se simula mediante archivos CSV). 
 
-Este repositorio contiene el **código fuente del servidor** y scripts de simulación para el gateway y los sensores.  
-
+Aunque este repositorio solamente contiene el **código fuente del servidor**, se incluyen algunos scripts que permiten la simulación para el gateway y los sensores.  
 
 ## 🚀 Guía de Configuración y Ejecución
 
@@ -58,16 +57,20 @@ python manage.py migrate
 python manage.py runserver
 ```
 ### **6. Simulacion de sensores**
-El algoritmo que se encarga de recibir los datos de los sensores es servidor.py asi que para ponerlo a la escucha de las peticiones ejecuta:
+El proyecto incluye scripts que permiten **probar el sistema sin necesidad de hardware real**.  
+La comunicación entre los componentes se realiza en tres pasos:
+1. **Iniciar el servidor TCP**  
+   Este módulo recibe los datos provenientes del gateway.  
 ```python
 python servidor.py
 ```
-Ahora bien, a fin de poder probar la interfaz  se diseño un algoritmo que permite simular el comportamiento del gateway que fue usado en el proyecto para usarlo ejecuta:
+2. **Ejecutar la simulación del Gateway**
+El gateway actúa como intermediario entre los sensores y el servidor.
 ```python
-python servidor.py
+python gateway.py
 ```
-Finalmente, para que puedas probar el proyecto tambien se diseño unarchivo que simula los sensores, los datos son los archivos obtenidos en el archi clima.csv debes ejectuar:
-Ahora bien, a fin de poder probar la interfaz  se diseño un algoritmo que permite simular el comportamiento del gateway que fue usado en el proyecto para usarlo ejecuta:
+3. **Ejecutar la simulación de Sensores**
+Este script toma los datos desde el archivo clima.csv y los envía al gateway, emulando el funcionamiento de los sensores físicos.
 ```python
 python simulate_sensors.py
 ```
