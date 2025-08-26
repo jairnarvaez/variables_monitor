@@ -104,8 +104,8 @@ def run_server():
 
     database = "db.sqlite3"
     server_ip = "127.0.0.1"
-    port = 8002   # ⚠ usar distinto al gateway (ej: 8003)
-
+    port = 8002   
+    
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.bind((server_ip, port))
     server.listen(5)

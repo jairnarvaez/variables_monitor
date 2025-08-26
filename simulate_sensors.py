@@ -3,14 +3,11 @@ import time
 import threading
 import csv
 
-# Configuración del servidor (gateway)
 SERVER_IP = "127.0.0.1"
 SERVER_PORT = 8001
 
-# Ruta al CSV con los datos de sensores
 CSV_FILE = "clima.csv"
 
-# Definición de sensores disponibles (key -> columna CSV)
 SENSORES = {
     1: ("TEMP", "Temperature (C)"),
     2: ("APAR", "Apparent Temperature (C)"),
@@ -19,7 +16,6 @@ SENSORES = {
     5: ("PRES", "Pressure (millibars)")
 }
 
-# Cargar datos del CSV
 def cargar_datos():
     with open(CSV_FILE, newline="", encoding="utf-8") as f:
         reader = csv.DictReader(f)
@@ -37,11 +33,10 @@ def sensor_client(key, nombre_columna, intervalo=2):
 
         i = 0
         while True:
-            fila = DATOS[i % len(DATOS)]   # recorrer el CSV en bucle
+            fila = DATOS[i % len(DATOS)]   
             valor = fila[nombre_columna]
             timestamp = fila["Formatted Date"]
 
-            # Mensaje: KEY,valor,timestamp
             msg = f"{key},{valor},{timestamp}"
             print(f"[{key}] Enviando: {msg}")
             client.send(msg.encode("utf-8")[:1024])
