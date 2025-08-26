@@ -8,7 +8,11 @@ El sistema se estructuró en tres componentes principales:
 2. **Gateway** – Recibe los datos de los sensores y los transmite al servidor, implementado en una Raspberry PI 4  
 3. **Red de Sensores** – Captura datos ambientales  usando como plataforma Arduino  (en este repositorio se simula mediante archivos CSV). 
 
-Aunque este repositorio solamente contiene el **código fuente del servidor**, se incluyen algunos scripts que permiten la simulación para el gateway y los sensores.  
+Aunque este repositorio solamente contiene el **código fuente del servidor**, se incluyen algunos scripts que permiten la simulación para el gateway y los sensores.
+
+La interfaz cuenta con un dashboard intuitivo que permite al usuario registrar nuevos sensores y gestionar la información de manera sencilla.
+Además, incluye una tabla dinámica de alertas que muestra en tiempo real las notificaciones generadas cuando un sensor registra valores fuera de rango.
+El usuario puede interactuar con esta tabla para revisar, organizar y administrar las alertas. 
 
 ## 🚀 Guía de Configuración y Ejecución
  
