@@ -11,10 +11,8 @@ El sistema se estructuró en tres componentes principales:
 Aunque este repositorio solamente contiene el **código fuente del servidor**, se incluyen algunos scripts que permiten la simulación para el gateway y los sensores.  
 
 ## 🚀 Guía de Configuración y Ejecución
-
-Proyecto en **Django** para monitorear variables de sensores.  
+ 
 Este repositorio contiene el código fuente y los recursos necesarios para ejecutar la aplicación localmente.
-
 
 ### **1. Requisitos del Sistema**
 
@@ -35,25 +33,25 @@ cd variables_monitor
 
 ### **3. Configuración del Entorno Virtual**
 
-```python
+```bash
 python -m venv venv
 source venv/bin/activate
 ```
 
 ### **4. Instalación dependencias**
 
-```python
+```bash
 pip install -r requirements.txt
 ```
 
 ### **4. Migraciones a la base de datos**
-```python
+```bash
 python manage.py makemigrations
 python manage.py migrate
 ```
 
 ### **5. Ejecutar el servidor**
-```python
+```bash
 python manage.py runserver
 ```
 ### **6. Simulacion de sensores**
@@ -61,16 +59,16 @@ El proyecto incluye scripts que permiten **probar el sistema sin necesidad de ha
 La comunicación entre los componentes se realiza en tres pasos:
 1. **Iniciar el servidor TCP**  
    Este módulo recibe los datos provenientes del gateway.  
-```python
+```bash
 python servidor.py
 ```
 2. **Ejecutar la simulación del Gateway**
 El gateway actúa como intermediario entre los sensores y el servidor.
-```python
+```bash
 python gateway.py
 ```
 3. **Ejecutar la simulación de Sensores**
 Este script toma los datos desde el archivo clima.csv y los envía al gateway, emulando el funcionamiento de los sensores físicos.
-```python
+```bash
 python simulate_sensors.py
 ```
