@@ -1,12 +1,21 @@
-# Nombre de tu Proyecto
+# 🌱 AgriTech – Plataforma de Monitoreo Ambiental
 
-Una descripción breve y concisa de lo que hace tu proyecto. ¿Cuál es su propósito? ¿Qué problema resuelve?
+AgriTech es una plataforma desarrollada en el marco de un proyecto de integración profesional.  
+Su objetivo es **monitorear variables ambientales de una huerta comunitaria** mediante una estación meteorológica.  
 
----
+El sistema está estructurado en tres componentes principales:  
+1. **Servidor** – Desarrollado en Django, gestiona la interfaz web y la base de datos.  
+2. **Gateway** – Recibe los datos de los sensores y los transmite al servidor.  
+3. **Red de Sensores** – Captura datos ambientales (en este repositorio se simula mediante archivos CSV).  
+
+Este repositorio contiene el **código fuente del servidor** y scripts de simulación para el gateway y los sensores.  
+
 
 ## 🚀 Guía de Configuración y Ejecución
 
-Esta guía te ayudará a poner en marcha este proyecto de manera local.
+Proyecto en **Django** para monitorear variables de sensores.  
+Este repositorio contiene el código fuente y los recursos necesarios para ejecutar la aplicación localmente.
+
 
 ### **1. Requisitos del Sistema**
 
@@ -21,8 +30,8 @@ Asegúrate de tener instalados los siguientes programas en tu sistema:
 Usa `git` para obtener el código fuente del proyecto en tu máquina.
 
 ```bash
-git clone <url_del_repositorio>
-cd <nombre_del_directorio_del_proyecto>
+git clone https://github.com/jairnarvaez/variables_monitor.git
+cd variables_monitor
 ```
 
 ### **3. Configuración del Entorno Virtual**
@@ -48,4 +57,17 @@ python manage.py migrate
 ```python
 python manage.py runserver
 ```
-
+### **6. Simulacion de sensores**
+El algoritmo que se encarga de recibir los datos de los sensores es servidor.py asi que para ponerlo a la escucha de las peticiones ejecuta:
+```python
+python servidor.py
+```
+Ahora bien, a fin de poder probar la interfaz  se diseño un algoritmo que permite simular el comportamiento del gateway que fue usado en el proyecto para usarlo ejecuta:
+```python
+python servidor.py
+```
+Finalmente, para que puedas probar el proyecto tambien se diseño unarchivo que simula los sensores, los datos son los archivos obtenidos en el archi clima.csv debes ejectuar:
+Ahora bien, a fin de poder probar la interfaz  se diseño un algoritmo que permite simular el comportamiento del gateway que fue usado en el proyecto para usarlo ejecuta:
+```python
+python simulate_sensors.py
+```
