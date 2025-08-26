@@ -1,0 +1,219 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+{% load custom_filters %}
+
+<main class="main-content border-radius-lg">    
+    <div class="container-fluid pt-2">
+        <div class="row">
+            <div class="col-lg-7 position-relative z-index-2">
+                <div class="card card-plain mb-4 ms-3 pb-4">
+                    <h2 class="font-weight-bolder mb-0">Estadísticas Generales</h2>
+                </div>
+                
+                <div id="charts-container" class="row"> </div>
+            </div>
+        </div>
+
+		<button type="button" id="add-sensor-button" class="btn btn-info d-flex align-items-center justify-content-center">
+		    <span>AGREGAR SENSOR</span>
+		    <span class="material-symbols-rounded">add</span>
+		</button>
+
+
+        <div class="row mt-4 justify-content-center">
+            <div class="col-lg-9 mt-3 mb-4">
+                <div class="card z-index-2">
+                    <div class="card-header pb-0">
+                        <h6>Estado general de la huerta</h6>
+                        <div class="alert-danger"></div>
+                        <p class="">
+                            <i class="fa fa-arrow-right text-success"></i>
+                            <span class="font-weight-bold"></span>
+                            La huerta se encuentra en un estado saludable en este momento. La temperatura es la adecuada para el crecimiento de las plantas. El suelo, retiene bien la humedad, lo que es beneficioso para las plantas, y el riego se ha realizado de manera constante manteniendo las raíces hidratadas. Sin embargo, se ha notado que algunas de las plantas muestran signos de deficiencia de nutrientes. Las hojas de algunas hortalizas presentan amarilleo y un crecimiento más lento, indicando una necesidad de fertilización.
+                        </p>
+                        <p id="miDiv"></p>
+                    </div>
+                </div>
+                <div class="row justify-content-end">
+                    <div class="col-lg-3 mt-4">
+						<button type="button" id="miBoton" class="btn btn-success d-flex  align-items-center justify-content-center">
+						  <span>RECOMENDACIONES</span>
+						  <span class="material-symbols-rounded">expand_more</span>
+						</button>
+						
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+		<div class="card mb-4">
+		    <div class="card-header pb-0">
+		        <h5>Historial de Alertas</h5>
+		    </div>
+		    <div class="card-body">
+		    	<div class="table-responsive">
+			        <table id="datatablesSimple" class="table table-bordered">
+			            <thead>
+			                <tr>
+			                    <th>ID Alerta</th>
+			                    <th>Sensor</th>
+			                    <th>Valor</th>
+			                    <th>Umbral</th>
+			                    <th>Mensaje</th>
+			                    <th>Estado</th>
+			                    <th>Fecha y Hora</th>
+			                </tr>
+			            </thead>
+			            <tbody>
+			            </tbody>
+			        </table>
+			    </div>    
+		    </div>
+		</div>
+
+		<div class="fixed-plugin">
+		    <a class="fixed-plugin-button text-dark position-fixed px-3 py-2">
+		        <i class="material-symbols-rounded py-2">settings</i>
+		    </a>
+		    <div class="card shadow-lg">
+		        <div class="card-header pb-0 pt-3">
+		            <div class="float-start">
+		                <h5 class="mt-3 mb-0">Configuraciones</h5>
+		            </div>
+		            <div class="float-end mt-4">
+		                <button class="btn btn-link text-dark p-0 fixed-plugin-close-button">
+		                    <i class="material-symbols-rounded">clear</i>
+		                </button>
+		            </div>
+		        </div>
+		        <hr class="horizontal dark my-1">
+		        <div class="card-body pt-sm-3 pt-0">
+		            <div class="mt-3">
+		                <h6 class="mb-0">Barra de navegación</h6>
+		                <p class="text-sm">Elija entre 2 tipos diferentes de navegación lateral.</p>
+		            </div>
+		            <div class="d-flex">
+		                <button class="btn bg-gradient-dark px-3 mb-2 active" data-class="bg-gradient-dark" onclick="sidebarType(this)">Dark</button>
+		                <button class="btn bg-gradient-dark px-3 mb-2 ms-2" data-class="bg-transparent" onclick="sidebarType(this)">Transparent</button>
+		                <button class="btn bg-gradient-dark px-3 mb-2 ms-2" data-class="bg-white" onclick="sidebarType(this)">Light</button>
+		            </div>
+		            
+		            <div class="mt-3 d-flex">
+		                <h6 class="mb-0">Barra de navegación</h6>
+		                <div class="form-check form-switch ps-0 ms-auto my-auto">
+		                    <input class="form-check-input mt-1 ms-auto" type="checkbox" id="navbarFixed" onclick="navbarFixed(this)">
+		                </div>
+		            </div>
+		            
+		            <hr class="horizontal dark my-3">
+		            <div class="mt-2 d-flex">
+		                <h6 class="mb-0">Light / Dark</h6>
+		                <div class="form-check form-switch ps-0 ms-auto my-auto">
+		                    <input class="form-check-input mt-1 ms-auto" type="checkbox" id="dark-version" onclick="darkMode(this)">
+		                </div>
+		            </div>
+		            <hr class="horizontal dark my-sm-4">
+		        </div>
+		    </div>
+		</div>
+
+
+
+
+
+
+
+
+
+
+
+        
+
+    </div>
+</main>
+
+<dialog id="confirm-dialog" style="border: none; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+  <h5>¿Estás seguro de que quieres marcar esta alerta como resuelta?</h5>
+  
+  <label for="alert-comment" style="display: block; margin-top: 15px;">Comentarios:</label>
+  <textarea id="alert-comment" style="width: 100%; margin-top: 5px;"></textarea>
+
+  <div style="margin-top: 20px; display: flex; justify-content: flex-end; gap: 10px;">
+    <button id="cancel-resolve-btn" class="btn btn-secondary">Cancelar</button>
+    <button id="confirm-resolve-btn" class="btn btn-danger">Confirmar</button>
+  </div>
+</dialog>
+    
+
+
+
+<dialog id="add-sensor-dialog" style="border: none; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+    <h5>Agregar Nuevo Sensor</h5>
+    <form id="add-sensor-form">
+        <label for="sensor-name">Nombre del Sensor:</label>
+        <input type="text" id="sensor-name" required>
+        <br>
+
+
+        <label for="sensor-short-code">Código Corto:</label>
+        <select id="sensor-short-code">
+            <option value="TEMP">TEMP</option>
+            <option value="APAR">APAR</option>
+            <option value="HUMI">HUMI</option>
+            <option value="WIND">WIND</option>        
+            <option value="PRES">PRES</option>   
+        </select>
+
+        <br>
+        <label for="sensor-unit">Unidad:</label>
+        <input type="text" id="sensor-unit" required>
+        <br>
+        
+        <label for="sensor-icon">Ícono (Material Icons):</label>
+        <select id="sensor-icon">
+            <option value="air">Aire</option>
+            <option value="potted_plant">Planta</option>
+            <option value="water_drop">Gota de agua</option>
+            <option value="eco">Hoja</option>        
+            <option value="light_mode">Luz</option>   
+            <option value="thermostat">Termómetro</option>   
+        </select>
+
+        <br>
+
+        
+        <label for="sensor-gradient">Color (gradient):</label>
+        <select id="sensor-gradient">
+            <option value="success">Verde</option>
+            <option value="warning">Amarillo</option>
+            <option value="info">Azul</option>
+            <option value="danger">Rojo</option>        
+            <option value="primary">Rosado</option>        
+            <option value="secondary">Gris</option>        
+        </select>
+        <br>
+        <label for="sensor-min">Umbral Mínimo:</label>
+        <input type="number" id="sensor-min" required>
+        <br>
+        <label for="sensor-max">Umbral Máximo:</label>
+        <input type="number" id="sensor-max" required>
+        <br>
+        <div style="margin-top: 20px; display: flex; justify-content: flex-end; gap: 10px;">
+            <button type="button" id="cancel-add-btn" class="btn btn-secondary">Cancelar</button>
+            <button type="submit" id="add-sensor-btn" class="btn btn-success">Agregar</button>
+        </div>
+    </form>
+</dialog>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
+<script>
+  const CSRF_TOKEN = "{{ csrf_token }}";
+</script>
+<script src="{% static 'js/main_menu.js' %}"></script>
+        
+{% endblock content %}

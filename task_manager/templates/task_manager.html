@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<main class="main-content border-radius-lg">
+  <div class="container-fluid pt-2">
+    <div class="row">
+      <div class="col-lg-7 position-relative z-index-2">
+
+    
+        <div class="card card-plain mb-4 ms-3 pb-4">
+          <h2 class="font-weight-bolder mb-0">Tareas</h2>
+        </div>
+
+        <div class="row">
+          <div class="col-lg-5 col-sm-5">
+            <div class="card mb-2">
+              <div class="card-header p-3 pt-2">
+                <div
+                  class="icon icon-lg icon-shape bg-gradient-info shadow-info shadow text-center border-radius-xl mt-n4 position-absolute">
+                  <i class="material-symbols-rounded opacity-10">receipt</i>
+                </div>
+                <div class="text-end pt-1">
+                  <h4>LISTA DE TAREAS</h4>
+                </div>
+              </div>
+
+              <hr class="dark horizontal my-0">
+              <div class="card-footer p-3">
+                <div class="contenedor">
+                  <div class="tareas" id="tareas">
+                    <div class="item-tarea">
+                      <p>Tarea 1</p>
+                      <div class="botones">
+                        <button class="eliminar" data-id="${item.id}">x</button>
+                        <button class="completada" data-id="${item.id}">_/</button>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+
+                <hr class="dark horizontal my-0">
+
+                <div class="datos">
+                  <p id="total">Total tareas: 0</p>
+                  <p id="completadas">Tareas Completadas: 0</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-5 col-sm-5 mt-sm-0 mt-4">
+            <div class="card mb-2 mt-6">
+              <div class="card-header p-3 pt-2">
+                <div
+                  class="icon icon-lg icon-shape bg-gradient-warning shadow-warning text-center border-radius-xl mt-n4 position-absolute">
+                  <i class="material-symbols-rounded opacity-10">receipt</i>
+                </div>
+                <div class="text-end pt-1">
+                  <h4>AGREGAR TAREAS</h4>
+                </div>
+              </div>
+
+              <hr class="dark horizontal my-0">
+              <div class="card-footer p-3">
+                <div class="contenedor">
+                  <form class="formulario" id="formulario">
+                    <h5>FORMULARIO</h5>
+                    <input type="text" id="tarea">
+                    <input type="submit" value="Agregar">
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <script src="{% static 'js/app_task.js' %}"></script>
+        </div>
+      </div>
+    </div>
+
+  
+  </div>
+</main>
+
+{% endblock content %}

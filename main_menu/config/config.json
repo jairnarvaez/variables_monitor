@@ -1,0 +1,26 @@
+{
+    "velocidad_del_viento": {
+        "short_code": "WIND",
+        "name": "Velocidad del viento",
+        "color": "#47a0f0",
+        "unit": "m/s",
+        "icon": "air",
+        "gradient": "info",
+        "threshold": {
+            "min": 0,
+            "max": 27
+        }
+    },
+    "temperatura": {
+        "short_code": "TEMP",
+        "name": "Temperatura",
+        "color": "#ee6666",
+        "unit": "\u00b0C",
+        "icon": "thermostat",
+        "gradient": "danger",
+        "threshold": {
+            "min": 0,
+            "max": 21
+        }
+    }
+}

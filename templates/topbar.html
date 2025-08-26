@@ -1,0 +1,42 @@
+<nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none border-radius-xl" id="navbarBlur" data-scroll="true">
+    <div class="container-fluid py-1 px-3">
+        <nav aria-label="breadcrumb">
+            <h6 class="font-weight-bolder mb-0">{{ breadcrumb_titulo|default:'Dashboard' }}</h6>
+        </nav>
+        
+        <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
+            <div class="ms-md-auto pe-md-3 d-flex align-items-center">
+                <ul class="navbar-nav justify-content-end">
+                    <li class="nav-item d-flex align-items-center me-3">
+                        <span class="text-white text-sm me-2">Última actualización:</span>
+                        <span class="text-white font-weight-bold text-sm">{{ last_update_time|date:"H:i:s" }}</span>
+                    </li>
+                    <li class="nav-item d-flex align-items-center position-relative">
+                        <a href="{% url 'notifications:notifications' %}" class="nav-link text-body p-0">
+                            <i class="fa fa-bell cursor-pointer me-2" 
+                               {% if active_alerts_count > 0 %} style="color: #ff5252;" {% else %} style="color: #ffffff;" {% endif %}></i>
+                        </a>
+                        {% if active_alerts_count > 0 %}
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                {{ active_alerts_count }}
+                                <span class="visually-hidden">Alertas activas</span>
+                            </span>
+                        {% endif %}
+                    </li>
+                </ul>
+            </div>
+            
+            <ul class="navbar-nav justify-content-end">
+                <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
+                    <a href="javascript:;" class="nav-link text-body p-0" id="iconNavbarSidenav">
+                        <div class="sidenav-toggler-inner">
+                            <i class="sidenav-toggler-line"></i>
+                            <i class="sidenav-toggler-line"></i>
+                            <i class="sidenav-toggler-line"></i>
+                        </div>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>

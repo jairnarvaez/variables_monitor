@@ -1,0 +1,362 @@
+const API_BASE_URL = "http://127.0.0.1:8000";
+const charts = {};
+
+let SENSORS_CONFIG = {};
+let SENSORS_LIST = [];
+let SENSORS_THRESHOLD_MAP = {};
+
+let alertsTable = null;
+
+function generateChartsHtml() {
+    const container = document.getElementById('charts-container');
+    if (!container) return;
+
+    container.innerHTML = '';
+
+    SENSORS_LIST.forEach(sensorName => {
+        const config = SENSORS_CONFIG[sensorName];
+
+        const chartHtml = `
+            <div class="col-lg-6">
+                <div class="card mb-6">
+                    <div class="card-header p-3 pt-2">
+                        <div class="icon icon-lg icon-shape bg-gradient-${config.gradient} shadow-${config.gradient} shadow text-center border-radius-xl mt-n4 position-absolute">
+                            <i class="material-symbols-rounded opacity-10">${config.icon}</i>
+                        </div>
+                        <div class="text-end pt-1">
+                            <p class="text-sm mb-0 text-capitalize">${config.name}</p>
+                            <h4 class="mb-0" id="max-${sensorName}">N/A</h4>
+                        </div>
+                        <div id="graph_${sensorName}" class="graph_${sensorName} graph_style_wi mt-n5 text-lg-start position-relative"></div>
+                    </div>
+                    <hr class="dark horizontal my-0">
+                    <div class="card-footer p-3">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <p class="mb-0">
+                                    <i class="material-symbols-rounded opacity-10 text-${config.gradient}">verified_user</i>
+                                    <span class="text-${config.gradient} text-sm font-weight-bolder"> Comentarios </span>
+                                    Los niveles son los adecuados, no requiere acción.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        container.innerHTML += chartHtml;
+    });
+}
+
+
+
+async function initApp() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/get_sensors_config/`);
+        if (!response.ok) {
+            throw new Error('No se pudo obtener la configuración del servidor.');
+        }
+        SENSORS_CONFIG = await response.json();
+        SENSORS_LIST = Object.keys(SENSORS_CONFIG);
+        console.log("Configuración de sensores cargada:", SENSORS_LIST);
+
+        for (const key in SENSORS_CONFIG) {
+            const sensorData = SENSORS_CONFIG[key];
+            if (sensorData.threshold) {
+                SENSORS_THRESHOLD_MAP[sensorData.short_code] = {
+                    min: sensorData.threshold.min,
+                    max: sensorData.threshold.max,
+                    unit: sensorData.unit
+                };
+            }
+        }
+        
+        console.log("Mapa de umbrales cargado:", SENSORS_THRESHOLD_MAP);
+        generateChartsHtml();
+        await initCharts();
+        setInterval(updateCharts, 5000);
+        
+        window.addEventListener("resize", () => {
+            Object.values(charts).forEach(chart => chart.resize());
+        });
+
+    } catch (error) {
+        console.error("Error al inicializar la aplicación:", error);
+    }
+}
+
+async function initCharts() {
+    SENSORS_LIST.forEach(sensorName => {
+        const chartElement = document.getElementById(`graph_${sensorName}`);
+        if (chartElement) {
+            charts[sensorName] = echarts.init(chartElement);
+        }
+    });
+    await updateCharts();
+}
+
+async function updateCharts() {
+    await Promise.all(SENSORS_LIST.map(async sensorName => {
+        const url = `${API_BASE_URL}/get_graph/${sensorName}/`;
+        const option = await fetchOption(url);
+        console.log(option);
+        if (option && charts[sensorName]) {
+            charts[sensorName].setOption(option);
+        }
+    }));
+}
+
+window.addEventListener("load", initApp);
+
+function updateStats(modelName) {
+    fetch(`${API_BASE_URL}/get_stats/${modelName}/`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                console.error('Error al obtener datos:', data.error);
+                return;
+            }
+            document.getElementById(`max-${modelName}`).textContent = data.stats.max_value !== null ? data.stats.max_value.toFixed(2) : 'N/A';
+           // document.getElementById(`min-${modelName}`).textContent = data.stats.min_value !== null ? data.stats.min_value.toFixed(2) : 'N/A';
+            //document.getElementById(`avg-${modelName}`).textContent = data.stats.avg_value !== null ? data.stats.avg_value.toFixed(2) : 'N/A';
+        })
+        .catch(error => console.error('Error de red:', error));
+}
+
+async function fetchOption(url) {
+    try {
+        const response = await fetch(url);
+        return await response.json();
+    } catch (ex) {
+        console.error("Error de red", ex);
+    }
+}
+
+window.addEventListener('DOMContentLoaded', event => {
+    alertsDataTable = $('#datatablesSimple').DataTable({
+        "ajax": {
+            "url": `${API_BASE_URL}/get_alerts_json/`,
+            // 1. Indica que los datos son la respuesta JSON completa (el arreglo)
+            "dataSrc": function(json) {
+                return json.map(alert => ({
+                // 2. Transforma los datos del JSON para que DataTables los entienda
+                    pk: alert.pk,
+                    sensor_type: alert.fields.sensor_type,
+                    value: alert.fields.value,
+                    umbral: SENSORS_THRESHOLD_MAP[alert.fields.sensor_type],
+                    message: alert.fields.message,
+                    is_resolved: alert.fields.is_resolved,
+                    timestamp: new Date(alert.fields.timestamp).toLocaleString()
+                }));
+            }
+        },
+        "lengthMenu": [
+            [5, 10, 15, -1], // Valores que se usarán (10, 25, 50, Todos)
+            ['5', '10', '15', 'Todos'] // Etiquetas de texto que se mostrarán
+        ],
+
+        "language": {
+            "lengthMenu": "Mostrar _MENU_ alertas por página", // Aquí se modifica el texto
+            "search": "Buscar:",
+            "info": "Mostrando del _START_ al _END_ de _TOTAL_ alertas",
+            "infoEmpty": "Mostrando 0 de 0 alertas",
+            "infoFiltered": "(filtrado de un total de _MAX_ alertas)",
+            "zeroRecords": "No se encontraron resultados",
+            "paginate": {
+                "first": "Primero",
+                "last": "Último",
+                "next": "Siguiente",
+                "previous": "Anterior"
+            }
+        },
+
+ 		"processing": false, 
+        
+        "columns": [
+            { "data": "pk" },
+            { "data": "sensor_type" },
+            { "data": "value" },
+            { 
+                "data": "umbral",
+                "render": function(umbral) {
+                    if (umbral) {
+                        return `Min: ${umbral.min}, Max: ${umbral.max} ${umbral.unit}`;
+                    }
+                    return 'N/A';
+                }
+            },
+            { "data": "message" },
+            {
+                "data": "is_resolved",
+		        "render": function(is_resolved, type, row) {
+				           		 const alertId = row.pk; 
+					            if (is_resolved) {
+					                return '<span class="badge bg-success">Resuelta</span>';
+					            } else {
+					                return `<button class="btn btn-sm badge bg-danger resolve-btn" data-alert-id="${alertId}">Activa</button>`;
+					            }
+		        }
+            },
+            { "data": "timestamp" }
+        ],
+        "processing": true,
+        "serverSide": false,
+        "order": [[6, "desc"]]
+    });
+
+    setInterval(function() {
+        alertsDataTable.ajax.reload(null, false);
+    }, 5000);
+});
+
+// Referencias a los nuevos elementos del pop-up
+const confirmDialog = document.getElementById('confirm-dialog');
+const confirmResolveBtn = document.getElementById('confirm-resolve-btn');
+const cancelResolveBtn = document.getElementById('cancel-resolve-btn');
+const alertCommentInput = document.getElementById('alert-comment'); // La referencia al input
+
+
+let currentAlertId = null;
+
+
+$(document).on('click', '.resolve-btn', function() {
+    currentAlertId = $(this).data('alert-id');
+    confirmDialog.showModal();
+});
+
+
+confirmResolveBtn.addEventListener('click', async () => {
+    confirmDialog.close();
+
+    if (!currentAlertId) {
+        return;
+    }
+
+    const comment = alertCommentInput.value;
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/resolve_alert/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': CSRF_TOKEN,
+            },
+            body: JSON.stringify({ 
+                'alert_id': currentAlertId,
+                'comment': comment 
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error(`Error de red: ${response.status}`);
+        }
+
+        const result = await response.json();
+
+        if (result.success) {
+            alertsDataTable.ajax.reload(null, false);
+        } else {
+            alert("Hubo un error al resolver la alerta: " + result.error);
+        }
+
+    } catch (error) {
+        console.error("Error al resolver la alerta:", error);
+        alert("Ocurrió un error inesperado. Por favor, inténtalo de nuevo.");
+    } finally {
+        currentAlertId = null;
+        alertCommentInput.value = ''; // Limpia el input después de enviar
+    }
+});
+
+// Evento para el botón "Cancelar" dentro del pop-up
+cancelResolveBtn.addEventListener('click', () => {
+    confirmDialog.close();
+    currentAlertId = null; // Limpia la variable
+});
+
+
+
+// Referencias a los nuevos elementos del pop-up
+const addSensorDialog = document.getElementById('add-sensor-dialog');
+const addSensorButton = document.getElementById('add-sensor-button');
+const cancelAddBtn = document.getElementById('cancel-add-btn');
+const addSensorForm = document.getElementById('add-sensor-form');
+
+// Evento para abrir el popup
+addSensorButton.addEventListener('click', () => {
+    addSensorDialog.showModal();
+});
+
+// Evento para cerrar el popup
+cancelAddBtn.addEventListener('click', () => {
+    addSensorDialog.close();
+});
+
+// Evento para enviar el formulario
+addSensorForm.addEventListener('submit', async (event) => {
+    event.preventDefault(); 
+    
+    // Recopila los datos del formulario
+    const sensorName = document.getElementById('sensor-name').value;
+    const shortCode = document.getElementById('sensor-short-code').value;
+    const unit = document.getElementById('sensor-unit').value;
+    const icon = document.getElementById('sensor-icon').value;
+    const gradient = document.getElementById('sensor-gradient').value;
+    //const color = document.getElementById('sensor-color').value; 
+    const minThreshold = document.getElementById('sensor-min').value;
+    const maxThreshold = document.getElementById('sensor-max').value;
+
+    const colors = {
+      success: '#6f9459',
+      warning: '#f9c55a',
+      info: '#47a0f0',
+      danger: '#ee6666',
+      primary: '#E5328E', // Morado claro
+      secondary: '#4b4b4b'  // Gris oscuro
+    };
+    
+    const color = colors[gradient] || '#000000'; 
+    
+
+    const newSensorData = {
+        name: sensorName,
+        short_code: shortCode,
+        color: color, 
+        unit: unit,
+        icon: icon,
+        gradient: gradient,
+        threshold: {
+            min: parseFloat(minThreshold),
+            max: parseFloat(maxThreshold)
+        }
+    };
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/add_sensor/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': CSRF_TOKEN,
+            },
+            body: JSON.stringify(newSensorData),
+        });
+
+        if (!response.ok) {
+            throw new Error(`Error de red: ${response.status}`);
+        }
+
+        const result = await response.json();
+
+        if (result.success) {
+            //alert('¡Sensor agregado con éxito!');
+            addSensorDialog.close();
+            window.location.reload(); 
+        } else {
+            alert('Hubo un error al agregar el sensor: ' + result.error);
+        }
+
+    } catch (error) {
+        console.error("Error al agregar el sensor:", error);
+        alert("Ocurrió un error inesperado. Por favor, inténtalo de nuevo.");
+    }
+});

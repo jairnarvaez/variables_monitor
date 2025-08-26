@@ -1,0 +1,86 @@
+{
+    "pressure": {
+        "short_code": "PRE",
+        "name": "Presi\u00f3n",
+        "color": "#6f9459",
+        "unit": "mg",
+        "icon": "eco",
+        "gradient": "success",
+        "threshold": {
+            "min": 0,
+            "max": 8
+        }
+    },
+    "radiation": {
+        "short_code": "RAD",
+        "name": "Radiaci\u00f3n",
+        "color": "#f9c55a",
+        "unit": "mg",
+        "icon": "light_mode",
+        "gradient": "warning",
+        "threshold": {
+            "min": 0,
+            "max": 8
+        }
+    },
+    "humidity": {
+        "short_code": "HUM",
+        "name": "Humedad",
+        "color": "#47a0f0",
+        "unit": "%",
+        "icon": "water_drop",
+        "gradient": "info",
+        "threshold": {
+            "min": 0,
+            "max": 8
+        }
+    },
+    "temperature": {
+        "short_code": "TEM",
+        "name": "Temperatura",
+        "color": "#ee6666",
+        "unit": "\u00b0C",
+        "icon": "thermostat",
+        "gradient": "danger",
+        "threshold": {
+            "min": 0,
+            "max": 8
+        }
+    },
+    "viento": {
+        "short_code": "WIND",
+        "name": "Viento",
+        "unit": "ms",
+        "icon": "eco",
+        "gradient": "success",
+        "color": "#6f9459",
+        "threshold": {
+            "min": 0,
+            "max": 10
+        }
+    },
+    "hola": {
+        "short_code": "bb",
+        "name": "Hola",
+        "unit": "b",
+        "icon": "eco",
+        "gradient": "info",
+        "color": "#6f9459",
+        "threshold": {
+            "min": 0,
+            "max": 29
+        }
+    },
+    "hola2": {
+        "short_code": "bb",
+        "name": "Hola2",
+        "unit": "b",
+        "icon": "eco",
+        "gradient": "info",
+        "color": "#6f9459",
+        "threshold": {
+            "min": 0,
+            "max": 29
+        }
+    }
+}
