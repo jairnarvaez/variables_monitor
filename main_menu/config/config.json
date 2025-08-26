@@ -22,5 +22,17 @@
             "min": 0,
             "max": 21
         }
+    },
+    "humedad": {
+        "short_code": "HUMI",
+        "name": "Humedad",
+        "color": "#f9c55a",
+        "unit": "%",
+        "icon": "water_drop",
+        "gradient": "warning",
+        "threshold": {
+            "min": 0,
+            "max": 100
+        }
     }
 }

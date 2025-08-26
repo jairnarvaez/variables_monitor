@@ -14,6 +14,10 @@ La interfaz cuenta con un dashboard intuitivo que permite al usuario registrar n
 Además, incluye una tabla dinámica de alertas que muestra en tiempo real las notificaciones generadas cuando un sensor registra valores fuera de rango.
 El usuario puede interactuar con esta tabla para revisar, organizar y administrar las alertas. 
 
+## 🎥 Vista Previa de la Plataforma
+![Demo de la plataforma](demo.gif)
+
+
 ## 🚀 Guía de Configuración y Ejecución
  
 Este repositorio contiene el código fuente y los recursos necesarios para ejecutar la aplicación localmente.
